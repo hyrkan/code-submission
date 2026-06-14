@@ -59,6 +59,12 @@
                 <button type="submit" class="btn btn-primary"><i class="bx bxs-lock-open"></i>Sign in as Student</button>
             </div>
         </div>
+
+        <div class="col-12">
+            <div class="text-center">
+                <p class="mb-0">Don't have an account? <a href="{{ route('student.register') }}">Sign up here</a></p>
+            </div>
+        </div>
     </form>
 
     @push('scripts')

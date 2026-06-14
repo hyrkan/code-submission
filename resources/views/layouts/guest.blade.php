@@ -27,18 +27,11 @@
     <div class="wrapper">
         <div class="section-authentication-signin d-flex align-items-center justify-content-center my-5 my-lg-0">
             <div class="container">
-                <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
-                    <div class="col mx-auto">
+                <div class="row">
+                    <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 mx-auto">
                         <div class="card mb-0">
                             <div class="card-body">
-                                <div class="p-4">
-                                    <div class="mb-3 text-center">
-                                        <img src="{{ asset('assets/images/logo-icon.png') }}" width="60" alt="" />
-                                    </div>
-                                    <div class="text-center mb-4">
-                                        <h5 class="">{{ config('app.name', 'CodeAnalyzer') }}</h5>
-                                        <p class="mb-0">Please enter your credentials</p>
-                                    </div>
+                                <div class="p-3 p-sm-4">
                                     {{ $slot }}
                                 </div>
                             </div>

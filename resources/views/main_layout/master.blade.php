@@ -26,6 +26,10 @@
 	<link rel="stylesheet" href="{{ asset('assets/css/dark-theme.css') }}" />
 	<link rel="stylesheet" href="{{ asset('assets/css/semi-dark.css') }}" />
 	<link rel="stylesheet" href="{{ asset('assets/css/header-colors.css') }}" />
+	<!-- DataTables CSS -->
+	<link href="{{ asset('assets/plugins/datatable/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
+	<meta name="csrf-token" content="{{ csrf_token() }}">
+	@stack('styles')
 	<title></title>
 </head>
 
@@ -306,8 +310,8 @@
 								<div class="ms-auto dropy-icon"><i class='bx bx-chevron-down'></i></div>
 							</a>
 							<ul class="dropdown-menu">
-							  <li><a class="dropdown-item" href="#"><i class='bx bx-list-ul'></i>All Quizzes</a></li>
-							  <li><a class="dropdown-item" href="#"><i class='bx bx-plus-circle'></i>Create Quiz</a></li>
+							  <li><a class="dropdown-item" href="{{ route('quizzes.index') }}"><i class='bx bx-list-ul'></i>All Quizzes</a></li>
+							  <li><a class="dropdown-item" href="{{ route('quizzes.create') }}"><i class='bx bx-plus-circle'></i>Create Quiz</a></li>
 							</ul>
 						  </li>
 						  <li class="nav-item dropdown">
@@ -318,8 +322,22 @@
 								<div class="ms-auto dropy-icon"><i class='bx bx-chevron-down'></i></div>
 							</a>
 							<ul class="dropdown-menu">
-							  <li><a class="dropdown-item" href="#"><i class='bx bx-user'></i>All Students</a></li>
-							  <li><a class="dropdown-item" href="#"><i class='bx bx-task'></i>Submissions</a></li>
+							  <li><a class="dropdown-item" href="{{ route('admin.students.index') }}"><i class='bx bx-user'></i>All Students</a></li>
+							  <li><a class="dropdown-item" href="{{ route('admin.submissions.index') }}"><i class='bx bx-task'></i>Submissions</a></li>
+							</ul>
+						  </li>
+						  <li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;" data-bs-toggle="dropdown">
+								<div class="parent-icon"><i class='bx bx-cog'></i>
+								</div>
+								<div class="menu-title d-flex align-items-center">Settings</div>
+								<div class="ms-auto dropy-icon"><i class='bx bx-chevron-down'></i></div>
+							</a>
+							<ul class="dropdown-menu">
+							  <li><a class="dropdown-item" href="{{ route('admin.settings.index') }}"><i class='bx bx-cog'></i>AI Configuration</a></li>
+							  <li><div class="dropdown-divider"></div></li>
+							  <li><a class="dropdown-item" href="{{ route('years.index') }}"><i class='bx bx-calendar'></i>Years</a></li>
+							  <li><a class="dropdown-item" href="{{ route('sections.index') }}"><i class='bx bx-layer'></i>Sections</a></li>
 							</ul>
 						  </li>
 						@endif
@@ -413,8 +431,10 @@
 	<script src="{{ asset('assets/js/index.js') }}"></script>
 	<!--app JS-->
 	<script src="{{ asset('assets/js/app.js') }}"></script>
-
-	
+	<!-- DataTables JS -->
+	<script src="{{ asset('assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
+	<script src="{{ asset('assets/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
+	@stack('scripts')
 
 </body>
 

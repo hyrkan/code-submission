@@ -6,9 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Section extends Model
 {
-    protected $fillable = ['name', 'is_archived'];
+    protected $fillable = ['name', 'year_id', 'is_archived'];
 
     protected $casts = ['is_archived' => 'boolean'];
+
+    public function year()
+    {
+        return $this->belongsTo(Year::class);
+    }
 
     public function students()
     {

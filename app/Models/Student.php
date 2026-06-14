@@ -12,10 +12,22 @@ class Student extends Model
         'last_name',
         'student_number',
         'course',
+        'year_id',
+        'section_id',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function year()
+    {
+        return $this->belongsTo(Year::class);
+    }
+
+    public function section()
+    {
+        return $this->belongsTo(Section::class);
     }
 }
