@@ -42,6 +42,7 @@ Route::middleware(['auth', 'is_employee'])->group(function () {
 
     // Admin: Students management
     Route::get('/students', [\App\Http\Controllers\AdminStudentController::class, 'index'])->name('admin.students.index');
+    Route::get('/students/{student}/analytics', [\App\Http\Controllers\AdminStudentController::class, 'analytics'])->name('admin.students.analytics');
     Route::get('/api/sections', [\App\Http\Controllers\AdminStudentController::class, 'getSections'])->name('admin.students.sections');
 
     // Admin: Quiz Submissions (3-level hierarchy)
@@ -50,6 +51,12 @@ Route::middleware(['auth', 'is_employee'])->group(function () {
     Route::get('/submissions/quiz/{quiz}/student/{student}', [\App\Http\Controllers\AdminSubmissionController::class, 'studentDetail'])->name('admin.submissions.student-detail');
     Route::get('/submissions/detail/{submission}', [\App\Http\Controllers\AdminSubmissionController::class, 'show'])->name('admin.submissions.show');
     Route::patch('/submissions/detail/{submission}', [\App\Http\Controllers\AdminSubmissionController::class, 'update'])->name('admin.submissions.update');
+
+    // Admin: Notifications
+    Route::post('/notifications/dismiss', function () {
+        session(['notifications_last_seen' => now()]);
+        return response()->json(['success' => true]);
+    })->name('admin.notifications.dismiss');
 
     // Admin: Settings
     Route::get('/settings', [\App\Http\Controllers\AdminSettingController::class, 'index'])->name('admin.settings.index');

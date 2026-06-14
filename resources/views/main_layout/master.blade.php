@@ -72,128 +72,59 @@
 
 							@unless(auth()->check() && auth()->user()->student)
 							<li class="nav-item dropdown dropdown-large">
-								<a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="#" data-bs-toggle="dropdown"><span class="alert-count">7</span>
+								<a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="#" data-bs-toggle="dropdown" id="notifBellBtn">
+									@if ($notifCount > 0)
+										<span class="alert-count" id="notifBadge">{{ $notifCount > 99 ? '99+' : $notifCount }}</span>
+									@endif
 									<i class='bx bx-bell'></i>
 								</a>
-								<div class="dropdown-menu dropdown-menu-end">
+								<div class="dropdown-menu dropdown-menu-end" style="min-width: 360px; max-height: 450px; overflow-y: auto;">
 									<a href="javascript:;">
 										<div class="msg-header">
 											<p class="msg-header-title">Notifications</p>
-											<p class="msg-header-badge">8 New</p>
+											<p class="msg-header-badge" id="notifHeaderBadge">{{ $notifCount > 0 ? $notifCount . ' New' : 'No new' }}</p>
 										</div>
 									</a>
-									<div class="header-notifications-list">
-										<a class="dropdown-item" href="javascript:;">
-											<div class="d-flex align-items-center">
-												<div class="user-online">
-													<img src="{{ asset('assets/images/avatars/avatar-1.png') }}" class="msg-avatar" alt="user avatar">
-												</div>
-												<div class="flex-grow-1">
-													<h6 class="msg-name">Daisy Anderson<span class="msg-time float-end">5 sec
-												ago</span></h6>
-													<p class="msg-info">The standard chunk of lorem</p>
-												</div>
+									<div class="header-notifications-list" id="notifList">
+										@if ($notifCount > 0 && $notifRecentSubmissions->count() > 0)
+											@foreach ($notifRecentSubmissions as $sub)
+												<a class="dropdown-item" href="{{ route('admin.submissions.show', $sub->id) }}">
+													<div class="d-flex align-items-center">
+														<div class="notify bg-light-primary text-primary">
+															<i class="bx bx-code-block"></i>
+														</div>
+														<div class="flex-grow-1">
+															<h6 class="msg-name">
+																{{ $sub->student->first_name ?? 'Unknown' }} {{ $sub->student->last_name ?? '' }}
+																<span class="msg-time float-end">{{ $sub->submitted_at?->diffForHumans() ?? '' }}</span>
+															</h6>
+															<p class="msg-info">Submitted to <strong>{{ $sub->quiz->name ?? 'a quiz' }}</strong></p>
+														</div>
+													</div>
+												</a>
+											@endforeach
+										@else
+											<div class="text-center py-4 text-muted">
+												<i class="bx bx-bell-off font-35 d-block mb-2"></i>
+												<p class="mb-0 small">No new submissions since you last checked.</p>
 											</div>
-										</a>
-										<a class="dropdown-item" href="javascript:;">
-											<div class="d-flex align-items-center">
-												<div class="notify bg-light-danger text-danger">dc
-												</div>
-												<div class="flex-grow-1">
-													<h6 class="msg-name">New Orders <span class="msg-time float-end">2 min
-												ago</span></h6>
-													<p class="msg-info">You have recived new orders</p>
-												</div>
-											</div>
-										</a>
-										<a class="dropdown-item" href="javascript:;">
-											<div class="d-flex align-items-center">
-												<div class="user-online">
-													<img src="{{ asset('assets/images/avatars/avatar-2.png') }}" class="msg-avatar" alt="user avatar">
-												</div>
-												<div class="flex-grow-1">
-													<h6 class="msg-name">Althea Cabardo <span class="msg-time float-end">14
-												sec ago</span></h6>
-													<p class="msg-info">Many desktop publishing packages</p>
-												</div>
-											</div>
-										</a>
-										<a class="dropdown-item" href="javascript:;">
-											<div class="d-flex align-items-center">
-												<div class="notify bg-light-success text-success">
-													<img src="{{ asset('assets/images/app/outlook.png') }}" width="25" alt="user avatar">
-												</div>
-												<div class="flex-grow-1">
-													<h6 class="msg-name">Account Created<span class="msg-time float-end">28 min
-												ago</span></h6>
-													<p class="msg-info">Successfully created new email</p>
-												</div>
-											</div>
-										</a>
-										<a class="dropdown-item" href="javascript:;">
-											<div class="d-flex align-items-center">
-												<div class="notify bg-light-info text-info">Ss
-												</div>
-												<div class="flex-grow-1">
-													<h6 class="msg-name">New Product Approved <span
-												class="msg-time float-end">2 hrs ago</span></h6>
-													<p class="msg-info">Your new product has approved</p>
-												</div>
-											</div>
-										</a>
-										<a class="dropdown-item" href="javascript:;">
-											<div class="d-flex align-items-center">
-												<div class="user-online">
-													<img src="{{ asset('assets/images/avatars/avatar-4.png') }}" class="msg-avatar" alt="user avatar">
-												</div>
-												<div class="flex-grow-1">
-													<h6 class="msg-name">Katherine Pechon <span class="msg-time float-end">15
-												min ago</span></h6>
-													<p class="msg-info">Making this the first true generator</p>
-												</div>
-											</div>
-										</a>
-										<a class="dropdown-item" href="javascript:;">
-											<div class="d-flex align-items-center">
-												<div class="notify bg-light-success text-success"><i class='bx bx-check-square'></i>
-												</div>
-												<div class="flex-grow-1">
-													<h6 class="msg-name">Your item is shipped <span class="msg-time float-end">5 hrs
-												ago</span></h6>
-													<p class="msg-info">Successfully shipped your item</p>
-												</div>
-											</div>
-										</a>
-										<a class="dropdown-item" href="javascript:;">
-											<div class="d-flex align-items-center">
-												<div class="notify bg-light-primary">
-													<img src="{{ asset('assets/images/app/github.png') }}" width="25" alt="user avatar">
-												</div>
-												<div class="flex-grow-1">
-													<h6 class="msg-name">New 24 authors<span class="msg-time float-end">1 day
-												ago</span></h6>
-													<p class="msg-info">24 new authors joined last week</p>
-												</div>
-											</div>
-										</a>
-										<a class="dropdown-item" href="javascript:;">
-											<div class="d-flex align-items-center">
-												<div class="user-online">
-													<img src="{{ asset('assets/images/avatars/avatar-8.png') }}" class="msg-avatar" alt="user avatar">
-												</div>
-												<div class="flex-grow-1">
-													<h6 class="msg-name">Peter Costanzo <span class="msg-time float-end">6 hrs
-												ago</span></h6>
-													<p class="msg-info">It was popularised in the 1960s</p>
-												</div>
-											</div>
-										</a>
+										@endif
 									</div>
-									<a href="javascript:;">
+									@if ($notifCount > 0)
 										<div class="text-center msg-footer">
-											<button class="btn btn-primary w-100">View All Notifications</button>
+											<button class="btn btn-primary w-100" id="markAllReadBtn">
+												<i class="bx bx-check-double"></i> Mark All as Read
+											</button>
 										</div>
-									</a>
+									@else
+										<a href="{{ route('admin.submissions.index') }}">
+											<div class="text-center msg-footer">
+												<button class="btn btn-outline-primary w-100">
+													<i class="bx bx-task"></i> View All Submissions
+												</button>
+											</div>
+										</a>
+									@endif
 								</div>
 							</li>
 							@endunless
@@ -423,6 +354,61 @@
 	<script src="{{ asset('assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
 	<script src="{{ asset('assets/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
 	@stack('scripts')
+
+	{{-- Notification dismiss handler --}}
+	<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		var markBtn = document.getElementById('markAllReadBtn');
+		if (markBtn) {
+			markBtn.addEventListener('click', function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+
+				var csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
+
+				fetch('{{ route("admin.notifications.dismiss") }}', {
+					method: 'POST',
+					headers: {
+						'X-CSRF-TOKEN': csrf,
+						'Accept': 'application/json',
+						'Content-Type': 'application/json',
+					},
+				}).then(function (res) {
+					return res.json();
+				}).then(function (data) {
+					if (data.success) {
+						// Remove the badge
+						var badge = document.getElementById('notifBadge');
+						if (badge) badge.remove();
+
+						// Update header
+						var headerBadge = document.getElementById('notifHeaderBadge');
+						if (headerBadge) headerBadge.textContent = 'No new';
+
+						// Replace notification list with empty state
+						var list = document.getElementById('notifList');
+						if (list) {
+							list.innerHTML = '<div class="text-center py-4 text-muted">' +
+								'<i class="bx bx-bell-off font-35 d-block mb-2"></i>' +
+								'<p class="mb-0 small">No new submissions since you last checked.</p>' +
+								'</div>';
+						}
+
+						// Replace footer with "View All" button
+						var footer = markBtn.closest('.msg-footer');
+						if (footer) {
+							footer.innerHTML = '<a href="{{ route("admin.submissions.index") }}">' +
+								'<button class="btn btn-outline-primary w-100">' +
+								'<i class="bx bx-task"></i> View All Submissions</button></a>';
+						}
+					}
+				}).catch(function (err) {
+					console.error('Notification dismiss error:', err);
+				});
+			});
+		}
+	});
+	</script>
 
 </body>
 

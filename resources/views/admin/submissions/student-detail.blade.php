@@ -42,7 +42,10 @@
                             &middot; {{ $student->user->email ?? 'N/A' }}
                         </p>
                     </div>
-                    <div>
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('admin.students.analytics', $student->id) }}" class="btn btn-outline-info btn-sm">
+                            <i class="bx bx-bar-chart-alt-2"></i> Analytics
+                        </a>
                         <a href="{{ route('admin.submissions.quiz-students', $quiz->id) }}" class="btn btn-outline-secondary btn-sm">
                             <i class="bx bx-arrow-back"></i> Back to Students
                         </a>

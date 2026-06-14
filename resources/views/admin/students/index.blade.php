@@ -75,6 +75,7 @@
                         <th>{{ __('Year') }}</th>
                         <th>{{ __('Section') }}</th>
                         <th>{{ __('Joined') }}</th>
+                        <th>{{ __('Actions') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -88,6 +89,11 @@
                             <td>{{ $student->year->name ?? 'N/A' }}</td>
                             <td>{{ $student->section->name ?? 'N/A' }}</td>
                             <td>{{ $student->created_at->format('M d, Y') }}</td>
+                            <td>
+                                <a href="{{ route('admin.students.analytics', $student->id) }}" class="btn btn-sm btn-outline-primary" title="View Analytics">
+                                    <i class="bx bx-bar-chart-alt-2"></i>
+                                </a>
+                            </td>
                         </tr>
                     @empty
                         <tr>
