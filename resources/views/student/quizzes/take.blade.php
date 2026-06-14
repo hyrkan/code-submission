@@ -341,8 +341,8 @@
                             <span class="badge bg-dark text-white">
                                 {{ $quiz->language === 'cpp' ? 'C++' : ucfirst($quiz->language) }}
                             </span>
-                            <span class="badge bg-warning text-dark ms-1" style="font-size:0.7rem;">
-                                <i class="bx bx-lock"></i> Copy/Paste Disabled
+                            <span class="badge bg-success text-white ms-1" style="font-size:0.7rem;">
+                                <i class="bx bx-check-shield"></i> Copy/Paste Enabled
                             </span>
                         </div>
                         <div class="d-flex align-items-center gap-2">
@@ -475,24 +475,6 @@ document.addEventListener('DOMContentLoaded', function () {
             );
 
             if (editor) {
-                // ── Disable copy / paste / cut ─────────────
-                editor.onKeyDown((e) => {
-                    const ctrlOrMeta = e.ctrlKey || e.metaKey;
-                    // Block Ctrl+C, Ctrl+V, Ctrl+X
-                    if (ctrlOrMeta && (e.keyCode === 33 || e.keyCode === 52 || e.keyCode === 54)) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                    }
-                });
-
-                // Also intercept clipboard events on the DOM node
-                const domNode = editor.getDomNode();
-                if (domNode) {
-                    ['copy','cut','paste'].forEach(evt => {
-                        domNode.addEventListener(evt, (e) => { e.preventDefault(); e.stopPropagation(); }, true);
-                    });
-                }
-
                 // Track changes for progress badge
                 editor.onDidChangeModelContent(() => {
                     const value       = editor.getValue().trim();

@@ -121,7 +121,9 @@
             <ol class="breadcrumb mb-0 p-0">
                 <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="bx bx-home-alt"></i></a></li>
                 <li class="breadcrumb-item"><a href="{{ route('admin.submissions.index') }}">{{ __('Quiz Submissions') }}</a></li>
-                <li class="breadcrumb-item active" aria-current="page">{{ __('Submission #' . $submission->id) }}</li>
+                <li class="breadcrumb-item"><a href="{{ route('admin.submissions.quiz-students', $submission->quiz_id) }}">{{ $submission->quiz->name ?? 'Quiz' }}</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('admin.submissions.student-detail', [$submission->quiz_id, $submission->student_id]) }}">{{ $submission->student->first_name }} {{ $submission->student->last_name }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ $submission->quizItem->title ?? 'Submission' }}</li>
             </ol>
         </nav>
     </div>
@@ -340,8 +342,8 @@
             <div class="card-body p-4">
                 <h6 class="mb-3"><i class="bx bx-link"></i> Quick Links</h6>
                 <div class="d-grid gap-2">
-                    <a href="{{ route('admin.submissions.index') }}" class="btn btn-outline-secondary btn-sm">
-                        <i class="bx bx-arrow-back"></i> All Submissions
+                    <a href="{{ route('admin.submissions.student-detail', [$submission->quiz_id, $submission->student_id]) }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bx bx-arrow-back"></i> Back to Student
                     </a>
                     @if ($submission->quiz)
                         <a href="{{ route('quizzes.show', $submission->quiz->id) }}" class="btn btn-outline-primary btn-sm">

@@ -46,6 +46,11 @@ class Quiz extends Model
         return $this->hasMany(QuizItem::class)->orderBy('sort_order');
     }
 
+    public function submissions()
+    {
+        return $this->hasMany(QuizSubmission::class);
+    }
+
     public function scopePublished($query)
     {
         return $query->where('is_published', true);

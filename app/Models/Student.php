@@ -30,4 +30,9 @@ class Student extends Model
     {
         return $this->belongsTo(Section::class);
     }
+
+    public function submissions()
+    {
+        return $this->hasMany(QuizSubmission::class);
+    }
 }

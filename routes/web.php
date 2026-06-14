@@ -44,10 +44,12 @@ Route::middleware(['auth', 'is_employee'])->group(function () {
     Route::get('/students', [\App\Http\Controllers\AdminStudentController::class, 'index'])->name('admin.students.index');
     Route::get('/api/sections', [\App\Http\Controllers\AdminStudentController::class, 'getSections'])->name('admin.students.sections');
 
-    // Admin: Quiz Submissions
+    // Admin: Quiz Submissions (3-level hierarchy)
     Route::get('/submissions', [\App\Http\Controllers\AdminSubmissionController::class, 'index'])->name('admin.submissions.index');
-    Route::get('/submissions/{submission}', [\App\Http\Controllers\AdminSubmissionController::class, 'show'])->name('admin.submissions.show');
-    Route::patch('/submissions/{submission}', [\App\Http\Controllers\AdminSubmissionController::class, 'update'])->name('admin.submissions.update');
+    Route::get('/submissions/quiz/{quiz}', [\App\Http\Controllers\AdminSubmissionController::class, 'quizStudents'])->name('admin.submissions.quiz-students');
+    Route::get('/submissions/quiz/{quiz}/student/{student}', [\App\Http\Controllers\AdminSubmissionController::class, 'studentDetail'])->name('admin.submissions.student-detail');
+    Route::get('/submissions/detail/{submission}', [\App\Http\Controllers\AdminSubmissionController::class, 'show'])->name('admin.submissions.show');
+    Route::patch('/submissions/detail/{submission}', [\App\Http\Controllers\AdminSubmissionController::class, 'update'])->name('admin.submissions.update');
 
     // Admin: Settings
     Route::get('/settings', [\App\Http\Controllers\AdminSettingController::class, 'index'])->name('admin.settings.index');

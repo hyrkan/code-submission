@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Quiz;
+use App\Models\QuizSubmission;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class StudentDashboardController extends Controller
 {
@@ -11,7 +13,8 @@ class StudentDashboardController extends Controller
     {
         $student = auth()->user()->student;
 
-        $quizzes = Quiz::with(['year', 'section', 'creator', 'items'])
+        // Get all published quizzes matching student's year/section
+        $allQuizzes = Quiz::with(['year', 'section', 'creator', 'items'])
             ->where('is_published', true)
             ->where(function ($query) {
                 $query->where('is_archived', false)
@@ -28,6 +31,34 @@ class StudentDashboardController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('student.dashboard.index', compact('quizzes'));
+        // Get quiz IDs the student has already submitted to
+        $submittedQuizIds = QuizSubmission::where('student_id', $student->id)
+            ->distinct()
+            ->pluck('quiz_id')
+            ->toArray();
+
+        $now = Carbon::now();
+
+        // Categorize quizzes
+        $completedQuizzes = $allQuizzes->filter(function ($quiz) use ($submittedQuizIds) {
+            return in_array($quiz->id, $submittedQuizIds);
+        });
+
+        $overdueQuizzes = $allQuizzes->filter(function ($quiz) use ($submittedQuizIds, $now) {
+            return !in_array($quiz->id, $submittedQuizIds)
+                && $quiz->scheduled_at
+                && $quiz->scheduled_at->lt($now);
+        });
+
+        $activeQuizzes = $allQuizzes->filter(function ($quiz) use ($submittedQuizIds, $now) {
+            return !in_array($quiz->id, $submittedQuizIds)
+                && (!$quiz->scheduled_at || $quiz->scheduled_at->gte($now));
+        });
+
+        return view('student.dashboard.index', compact(
+            'completedQuizzes',
+            'overdueQuizzes',
+            'activeQuizzes'
+        ));
     }
 }

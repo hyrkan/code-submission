@@ -292,18 +292,6 @@
 						  </li>
 						  <li class="nav-item dropdown">
 							<a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;" data-bs-toggle="dropdown">
-								<div class="parent-icon"><i class='bx bx-book-open'></i>
-								</div>
-								<div class="menu-title d-flex align-items-center">Exams</div>
-								<div class="ms-auto dropy-icon"><i class='bx bx-chevron-down'></i></div>
-							</a>
-							<ul class="dropdown-menu">
-							  <li><a class="dropdown-item" href="#"><i class='bx bx-list-ul'></i>All Exams</a></li>
-							  <li><a class="dropdown-item" href="#"><i class='bx bx-plus-circle'></i>Create Exam</a></li>
-							</ul>
-						  </li>
-						  <li class="nav-item dropdown">
-							<a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;" data-bs-toggle="dropdown">
 								<div class="parent-icon"><i class='bx bx-brain'></i>
 								</div>
 								<div class="menu-title d-flex align-items-center">Quizzes</div>

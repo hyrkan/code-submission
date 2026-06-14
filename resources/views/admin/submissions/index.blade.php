@@ -26,52 +26,27 @@
     </div>
 @endif
 
+{{-- Filter Bar --}}
 <div class="card radius-10 mb-4">
     <div class="card-body">
-        <!-- Filter Bar -->
-        <form method="GET" action="{{ route('admin.submissions.index') }}" class="row g-3 mb-0 align-items-end" id="filterForm">
-            <div class="col-md-2">
-                <label for="search" class="form-label">{{ __('Search') }}</label>
-                <input type="text" class="form-control" id="search" name="search" value="{{ request('search') }}" placeholder="Student or quiz...">
+        <form method="GET" action="{{ route('admin.submissions.index') }}" class="row g-3 mb-0 align-items-end">
+            <div class="col-md-4">
+                <label for="search" class="form-label">{{ __('Search Quizzes') }}</label>
+                <input type="text" class="form-control" id="search" name="search" value="{{ request('search') }}" placeholder="Quiz name...">
             </div>
-            <div class="col-md-2">
-                <label for="quiz_id" class="form-label">{{ __('Quiz') }}</label>
-                <select class="form-select" id="quiz_id" name="quiz_id">
-                    <option value="">{{ __('All Quizzes') }}</option>
-                    @foreach ($quizzes as $quiz)
-                        <option value="{{ $quiz->id }}" {{ request('quiz_id') == $quiz->id ? 'selected' : '' }}>{{ $quiz->name }}</option>
-                    @endforeach
+            <div class="col-md-3">
+                <label for="language" class="form-label">{{ __('Language') }}</label>
+                <select class="form-select" id="language" name="language">
+                    <option value="">{{ __('All Languages') }}</option>
+                    <option value="python" {{ request('language') === 'python' ? 'selected' : '' }}>Python</option>
+                    <option value="java" {{ request('language') === 'java' ? 'selected' : '' }}>Java</option>
+                    <option value="javascript" {{ request('language') === 'javascript' ? 'selected' : '' }}>JavaScript</option>
+                    <option value="c" {{ request('language') === 'c' ? 'selected' : '' }}>C</option>
+                    <option value="cpp" {{ request('language') === 'cpp' ? 'selected' : '' }}>C++</option>
+                    <option value="php" {{ request('language') === 'php' ? 'selected' : '' }}>PHP</option>
                 </select>
             </div>
-            <div class="col-md-2">
-                <label for="year_id" class="form-label">{{ __('Year') }}</label>
-                <select class="form-select" id="year_id" name="year_id">
-                    <option value="">{{ __('All Years') }}</option>
-                    @foreach ($years as $year)
-                        <option value="{{ $year->id }}" {{ request('year_id') == $year->id ? 'selected' : '' }}>{{ $year->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-md-2">
-                <label for="section_id" class="form-label">{{ __('Section') }}</label>
-                <select class="form-select" id="section_id" name="section_id">
-                    <option value="">{{ __('All Sections') }}</option>
-                    @foreach ($sections as $section)
-                        <option value="{{ $section->id }}" data-year-id="{{ $section->year_id }}" {{ request('section_id') == $section->id ? 'selected' : '' }}>{{ $section->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-md-2">
-                <label for="status" class="form-label">{{ __('Status') }}</label>
-                <select class="form-select" id="status" name="status">
-                    <option value="">{{ __('All Statuses') }}</option>
-                    <option value="submitted" {{ request('status') === 'submitted' ? 'selected' : '' }}>Submitted</option>
-                    <option value="graded" {{ request('status') === 'graded' ? 'selected' : '' }}>Graded</option>
-                    <option value="passed" {{ request('status') === 'passed' ? 'selected' : '' }}>Passed</option>
-                    <option value="failed" {{ request('status') === 'failed' ? 'selected' : '' }}>Failed</option>
-                </select>
-            </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <button type="submit" class="btn btn-primary me-1"><i class="bx bx-search"></i> {{ __('Filter') }}</button>
                 <a href="{{ route('admin.submissions.index') }}" class="btn btn-light"><i class="bx bx-reset"></i></a>
             </div>
@@ -79,189 +54,99 @@
     </div>
 </div>
 
-@php
-    $groupedSubmissions = $submissions->groupBy('quiz_id');
-@endphp
-
-@if ($groupedSubmissions->isEmpty())
+@if ($quizzes->isEmpty())
     <div class="card radius-10">
         <div class="card-body text-center py-5 text-muted">
             <i class="bx bx-task font-48 d-block mb-2"></i>
-            <p class="mb-0">{{ __('No submissions found.') }}</p>
+            <p class="mb-0">{{ __('No quiz submissions found.') }}</p>
         </div>
     </div>
 @else
-    @foreach ($groupedSubmissions as $quizId => $quizSubmissions)
-        @php
-            $quiz = $quizSubmissions->first()->quiz;
-            $totalSubmissions = $quizSubmissions->count();
-            $passedCount = $quizSubmissions->where('status', 'passed')->count();
-            $failedCount = $quizSubmissions->where('status', 'failed')->count();
-            $gradedCount = $quizSubmissions->where('status', 'graded')->count();
-            $submittedCount = $quizSubmissions->where('status', 'submitted')->count();
-        @endphp
+    <div class="row g-4">
+        @foreach ($quizzes as $quiz)
+            @php
+                $stats = $quiz->sub_stats;
+                $totalPts = $quiz->items->sum('points');
+            @endphp
+            <div class="col-md-6 col-xl-4">
+                <div class="card border h-100 shadow-sm">
+                    <div class="card-body">
+                        {{-- Quiz Name & Language --}}
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <h5 class="mb-0 text-primary">
+                                <i class="bx bx-brain"></i> {{ $quiz->name }}
+                            </h5>
+                            <span class="badge bg-dark text-white">
+                                {{ $quiz->language === 'cpp' ? 'C++' : ucfirst($quiz->language ?? '') }}
+                            </span>
+                        </div>
 
-        <div class="card border-top border-0 border-4 border-primary mb-4">
-            <div class="card-body p-4">
-                <!-- Quiz Header -->
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                    <div class="d-flex align-items-center gap-3">
-                        <h5 class="mb-0 text-primary">
-                            <i class="bx bx-brain"></i> {{ $quiz->name ?? 'Unknown Quiz' }}
-                        </h5>
-                        <span class="badge bg-dark text-white">
-                            {{ $quiz->language === 'cpp' ? 'C++' : ucfirst($quiz->language ?? '') }}
-                        </span>
-                    </div>
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="badge bg-primary text-white">{{ $totalSubmissions }} submissions</span>
-                        @if ($submittedCount > 0)
-                            <span class="badge bg-warning text-dark">{{ $submittedCount }} pending</span>
+                        @if ($quiz->description)
+                            <p class="text-muted small mb-2">{{ Str::limit($quiz->description, 80) }}</p>
                         @endif
-                        @if ($gradedCount > 0)
-                            <span class="badge bg-info text-white">{{ $gradedCount }} graded</span>
-                        @endif
-                        @if ($passedCount > 0)
-                            <span class="badge bg-success text-white">{{ $passedCount }} passed</span>
-                        @endif
-                        @if ($failedCount > 0)
-                            <span class="badge bg-danger text-white">{{ $failedCount }} failed</span>
-                        @endif
+
+                        {{-- Meta info --}}
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <span class="badge bg-light text-dark"><i class="bx bx-user"></i> {{ $stats->student_count }} students</span>
+                            <span class="badge bg-light text-dark"><i class="bx bx-file"></i> {{ $stats->total }} submissions</span>
+                            <span class="badge bg-light text-dark"><i class="bx bx-code-block"></i> {{ $quiz->items_count }} challenges</span>
+                            <span class="badge bg-light text-dark"><i class="bx bx-star"></i> {{ $totalPts }} pts</span>
+                        </div>
+
+                        {{-- Status breakdown bars --}}
+                        <div class="mb-3">
+                            @php
+                                $total = max($stats->total, 1);
+                                $pctPassed   = round(($stats->passed_count / $total) * 100);
+                                $pctFailed   = round(($stats->failed_count / $total) * 100);
+                                $pctGraded   = round(($stats->graded_count / $total) * 100);
+                                $pctPending  = round(($stats->pending_count / $total) * 100);
+                            @endphp
+                            <div class="progress" style="height: 8px;" title="Passed: {{ $stats->passed_count }}, Failed: {{ $stats->failed_count }}, Graded: {{ $stats->graded_count }}, Pending: {{ $stats->pending_count }}">
+                                @if ($pctPassed > 0)
+                                    <div class="progress-bar bg-success" style="width: {{ $pctPassed }}%"></div>
+                                @endif
+                                @if ($pctFailed > 0)
+                                    <div class="progress-bar bg-danger" style="width: {{ $pctFailed }}%"></div>
+                                @endif
+                                @if ($pctGraded > 0)
+                                    <div class="progress-bar bg-info" style="width: {{ $pctGraded }}%"></div>
+                                @endif
+                                @if ($pctPending > 0)
+                                    <div class="progress-bar bg-warning" style="width: {{ $pctPending }}%"></div>
+                                @endif
+                            </div>
+                            <div class="d-flex justify-content-between mt-1">
+                                <small class="text-muted">
+                                    @if ($stats->passed_count > 0)<span class="text-success"><i class="bx bx-check-circle"></i> {{ $stats->passed_count }}</span>@endif
+                                    @if ($stats->failed_count > 0)<span class="text-danger ms-2"><i class="bx bx-x-circle"></i> {{ $stats->failed_count }}</span>@endif
+                                    @if ($stats->graded_count > 0)<span class="text-info ms-2"><i class="bx bx-check"></i> {{ $stats->graded_count }}</span>@endif
+                                    @if ($stats->pending_count > 0)<span class="text-warning ms-2"><i class="bx bx-time-five"></i> {{ $stats->pending_count }}</span>@endif
+                                </small>
+                            </div>
+                        </div>
+
+                        {{-- Created date --}}
+                        <small class="text-muted d-block mb-3">
+                            <i class="bx bx-calendar"></i> Created {{ $quiz->created_at->format('M d, Y') }}
+                            @if ($quiz->creator)
+                                 &middot; by {{ $quiz->creator->name }}
+                            @endif
+                        </small>
+
+                        {{-- View Students Button --}}
+                        <a href="{{ route('admin.submissions.quiz-students', $quiz->id) }}" class="btn btn-primary w-100">
+                            <i class="bx bx-group"></i> View Students
+                        </a>
                     </div>
                 </div>
-                @if ($quiz->description)
-                    <p class="text-muted small mb-3">{{ Str::limit($quiz->description, 120) }}</p>
-                @endif
-
-                <!-- Submissions grouped by Challenge -->
-                @php
-                    $byChallenge = $quizSubmissions->groupBy('quiz_item_id');
-                @endphp
-
-                @foreach ($byChallenge as $itemId => $itemSubmissions)
-                    @php
-                        $item = $itemSubmissions->first()->quizItem;
-                    @endphp
-
-                    <div class="card border mb-3">
-                        <div class="card-header bg-light py-2">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <h6 class="mb-0">
-                                    <i class="bx bx-code-block text-success"></i>
-                                    {{ $item->title ?? 'Unknown Challenge' }}
-                                    @if ($item)
-                                        <span class="badge bg-{{ $item->difficulty === 'easy' ? 'success' : ($item->difficulty === 'medium' ? 'warning' : 'danger') }} text-white ms-2" style="font-size: 0.7rem;">{{ ucfirst($item->difficulty) }}</span>
-                                        <span class="badge bg-info text-white ms-1" style="font-size: 0.7rem;">{{ $item->points }} pts</span>
-                                    @endif
-                                </h6>
-                                <span class="badge bg-secondary text-white">{{ $itemSubmissions->count() }} submissions</span>
-                            </div>
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table table-hover align-middle mb-0">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>{{ __('Student') }}</th>
-                                            <th>{{ __('Student #') }}</th>
-                                            <th>{{ __('Year / Section') }}</th>
-                                            <th>{{ __('Status') }}</th>
-                                            <th>{{ __('Score') }}</th>
-                                            <th>{{ __('Submitted At') }}</th>
-                                            <th>{{ __('Actions') }}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($itemSubmissions as $submission)
-                                            <tr>
-                                                <td>
-                                                    <strong>{{ $submission->student->first_name }} {{ $submission->student->last_name }}</strong>
-                                                </td>
-                                                <td><span class="badge bg-dark text-white">{{ $submission->student->student_number ?? 'N/A' }}</span></td>
-                                                <td>
-                                                    <small>{{ $submission->student->year->name ?? 'N/A' }} - {{ $submission->student->section->name ?? 'N/A' }}</small>
-                                                </td>
-                                                <td>
-                                                    @if ($submission->status === 'passed')
-                                                        <span class="badge bg-success text-white">Passed</span>
-                                                    @elseif ($submission->status === 'failed')
-                                                        <span class="badge bg-danger text-white">Failed</span>
-                                                    @elseif ($submission->status === 'graded')
-                                                        <span class="badge bg-info text-white">Graded</span>
-                                                    @else
-                                                        <span class="badge bg-warning text-dark">Submitted</span>
-                                                    @endif
-                                                </td>
-                                                <td>{{ $submission->score ?? '—' }}</td>
-                                                <td>{{ $submission->submitted_at?->format('M d, Y h:i A') ?? 'N/A' }}</td>
-                                                <td>
-                                                    <a href="{{ route('admin.submissions.show', $submission->id) }}" class="btn btn-sm btn-outline-primary" title="View & Grade">
-                                                        <i class="bx bx-show m-0"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
             </div>
-        </div>
-    @endforeach
+        @endforeach
+    </div>
 
-    <!-- Pagination -->
-    <div class="d-flex justify-content-center mb-4">
-        {{ $submissions->links() }}
+    {{-- Pagination --}}
+    <div class="d-flex justify-content-center mt-4 mb-4">
+        {{ $quizzes->links() }}
     </div>
 @endif
 @endsection
-
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    var yearSelect = document.getElementById('year_id');
-    var sectionSelect = document.getElementById('section_id');
-    var allSectionOptions = [];
-
-    for (var i = 0; i < sectionSelect.options.length; i++) {
-        allSectionOptions.push({
-            value: sectionSelect.options[i].value,
-            text: sectionSelect.options[i].text,
-            yearId: sectionSelect.options[i].getAttribute('data-year-id')
-        });
-    }
-
-    yearSelect.addEventListener('change', function () {
-        var selectedYearId = this.value;
-        var currentVal = sectionSelect.value;
-
-        sectionSelect.innerHTML = '<option value="">All Sections</option>';
-        for (var j = 0; j < allSectionOptions.length; j++) {
-            var opt = allSectionOptions[j];
-            if (!selectedYearId || opt.yearId === selectedYearId) {
-                var newOpt = document.createElement('option');
-                newOpt.value = opt.value;
-                newOpt.text = opt.text;
-                newOpt.setAttribute('data-year-id', opt.yearId);
-                sectionSelect.appendChild(newOpt);
-            }
-        }
-
-        sectionSelect.value = currentVal;
-        if (sectionSelect.value !== currentVal) {
-            sectionSelect.value = '';
-        }
-    });
-
-    if (yearSelect.value) {
-        yearSelect.dispatchEvent(new Event('change'));
-        var currentSection = '{{ request("section_id") }}';
-        if (currentSection) {
-            sectionSelect.value = currentSection;
-        }
-    }
-});
-</script>
-@endpush
