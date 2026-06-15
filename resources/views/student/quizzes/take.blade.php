@@ -450,7 +450,7 @@ document.addEventListener('DOMContentLoaded', function () {
         javascript: `// Write your solution here\n\nfunction main() {\n    \n}\n\nmain();\n`,
         c:          `#include <stdio.h>\n\nint main() {\n    // Write your solution here\n    return 0;\n}\n`,
         cpp:        `#include <iostream>\nusing namespace std;\n\nint main() {\n    // Write your solution here\n    return 0;\n}\n`,
-        php:        `{!! "<?php" !!}\n\n// Write your solution here\n\n`,
+        php:        '<' + '?php\n\n// Write your solution here\n\n',
     };
 
     const monacoLanguageMap = {
