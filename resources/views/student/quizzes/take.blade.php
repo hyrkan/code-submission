@@ -618,10 +618,12 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        // Close modal and show completed overlay
+        // Close modal and redirect to results page
         setTimeout(() => {
             bootstrap.Modal.getInstance(document.getElementById('submitQuizModal'))?.hide();
-            setTimeout(showQuizCompleted, 400);
+            setTimeout(function() {
+                window.location.href = '/student/quizzes/{{ $quiz->id }}/results';
+            }, 400);
         }, 800);
     });
 

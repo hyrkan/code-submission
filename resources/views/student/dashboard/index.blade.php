@@ -249,9 +249,9 @@
                                     <span class="badge bg-light text-dark"><i class="bx bx-code-block"></i> {{ $quiz->items->count() }} challenges</span>
                                 </div>
                                 <div class="mt-3">
-                                    <span class="btn btn-sm btn-outline-secondary w-100 disabled">
-                                        <i class="bx bx-lock"></i> Already Completed
-                                    </span>
+                                    <a href="{{ route('student.quizzes.results', $quiz->id) }}" class="btn btn-sm btn-success w-100">
+                                        <i class="bx bx-bar-chart-alt-2"></i> View Results
+                                    </a>
                                 </div>
                             </div>
                         </div>

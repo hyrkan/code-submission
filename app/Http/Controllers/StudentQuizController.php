@@ -40,8 +40,7 @@ class StudentQuizController extends Controller
             ->count();
 
         if ($itemsCount > 0 && $submissionsCount >= $itemsCount) {
-            return redirect()->route('student.dashboard')
-                ->with('error', 'You have already completed this quiz. Please wait for your results.');
+            return redirect()->route('student.quizzes.results', $quiz->id);
         }
 
         return view('student.quizzes.take', compact('quiz'));
@@ -148,7 +147,52 @@ class StudentQuizController extends Controller
                 'quiz_item_id' => $quizItem->id,
                 'language' => $request->language ?? 'python',
                 'submitted_at' => $submission->submitted_at->toISOString(),
+                'results_url' => route('student.quizzes.results', $quiz->id),
             ],
         ]);
+    }
+
+    /**
+     * Show the quiz results with grades, assessments, and code review for the student.
+     */
+    public function results(string $quizId)
+    {
+        $student = auth()->user()->student;
+
+        $quiz = Quiz::with(['items' => function ($query) {
+            $query->orderBy('sort_order');
+        }, 'year', 'section', 'creator'])
+            ->findOrFail($quizId);
+
+        // Get all submissions for this student on this quiz
+        $submissions = QuizSubmission::where('quiz_id', $quiz->id)
+            ->where('student_id', $student->id)
+            ->with('quizItem')
+            ->orderBy('submitted_at', 'desc')
+            ->get()
+            ->keyBy('quiz_item_id');
+
+        // If no submissions found, redirect back
+        if ($submissions->isEmpty()) {
+            return redirect()->route('student.dashboard')
+                ->with('error', 'You have not submitted this quiz yet.');
+        }
+
+        // Calculate totals
+        $totalScore = $submissions->whereNotNull('score')->sum('score');
+        $totalPoints = $quiz->total_points;
+        $submittedCount = $submissions->count();
+        $totalItems = $quiz->items->count();
+        $percentage = $totalPoints > 0 ? round(($totalScore / $totalPoints) * 100, 1) : 0;
+
+        return view('student.quizzes.results', compact(
+            'quiz',
+            'submissions',
+            'totalScore',
+            'totalPoints',
+            'submittedCount',
+            'totalItems',
+            'percentage'
+        ));
     }
 }

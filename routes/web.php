@@ -79,6 +79,7 @@ Route::middleware(['auth', 'is_student'])->group(function () {
     Route::patch('/student/profile', [StudentProfileController::class, 'update'])->name('student.profile.update');
     Route::get('/student/quizzes/{quiz}', [\App\Http\Controllers\StudentQuizController::class, 'show'])->name('student.quizzes.take');
     Route::post('/student/quizzes/{quiz}/submit', [\App\Http\Controllers\StudentQuizController::class, 'submit'])->name('student.quizzes.submit');
+    Route::get('/student/quizzes/{quiz}/results', [\App\Http\Controllers\StudentQuizController::class, 'results'])->name('student.quizzes.results');
 });
 
 require __DIR__.'/auth.php';
